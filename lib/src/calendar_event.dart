@@ -10,6 +10,7 @@ class CalendarEvent {
     required this.eventTextStyle,
     this.eventBackgroundColor = Colors.blue,
     this.eventTypeBorderColor,
+    this.eventTypeColor,
     this.eventID,
   });
 
@@ -18,5 +19,6 @@ class CalendarEvent {
   final DateTime eventDate;
   final String? eventID;
   final Color eventBackgroundColor;
+  final Color? eventTypeColor;
   final Color? eventTypeBorderColor;
 }
