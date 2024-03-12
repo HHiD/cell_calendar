@@ -96,7 +96,9 @@ class _DayCell extends HookConsumerWidget {
                 return;
               }
               final notifier = ref.read(cellHeightProvider.notifier);
-              notifier.state = size.height;
+              //The today Label and DayLabel height = (dayLabelContentHeight + dayLabelVerticalMargin * 2)
+              notifier.state = (size.height -
+                  (dayLabelContentHeight + dayLabelVerticalMargin * 2));
             },
             child: Column(
               children: [
