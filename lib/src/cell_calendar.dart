@@ -18,6 +18,7 @@ final currentDateProvider = StateProvider((ref) => DateTime.now());
 ///
 /// Expected to be used in full screen
 class CellCalendar extends HookConsumerWidget {
+  final bool showMonthyearLabel;
   CellCalendar({
     this.cellCalendarPageController,
     this.events = const [],
@@ -28,6 +29,7 @@ class CellCalendar extends HookConsumerWidget {
     this.daysOfTheWeekBuilder,
     this.monthYearLabelBuilder,
     this.dateTextStyle,
+    this.showMonthyearLabel = false,
   });
 
   final CellCalendarPageController? cellCalendarPageController;
@@ -61,6 +63,7 @@ class CellCalendar extends HookConsumerWidget {
         onCellTapped: onCellTapped,
         todayMarkColor: todayMarkColor,
         todayTextColor: todayTextColor,
+        showMonthYearLabel: this.showMonthyearLabel,
       ),
     );
   }
@@ -78,6 +81,7 @@ class _CalendarPageView extends HookConsumerWidget {
     required this.onCellTapped,
     required this.todayMarkColor,
     required this.todayTextColor,
+    required this.showMonthYearLabel,
   }) : super(key: key);
   final CellCalendarPageController? cellCalendarPageController;
 
@@ -96,10 +100,19 @@ class _CalendarPageView extends HookConsumerWidget {
   final void Function(DateTime)? onCellTapped;
   final Color todayMarkColor;
   final Color todayTextColor;
+  final bool showMonthYearLabel;
 
   DateTime _getFirstDay(DateTime dateTime) {
     final firstDayOfTheMonth = DateTime(dateTime.year, dateTime.month, 1);
     return firstDayOfTheMonth.add(firstDayOfTheMonth.weekday.daysDuration);
+  }
+
+  DateTime getLastDayOfMonth(int year, int month) {
+    // Get the first day of the next month
+    DateTime firstDayOfNextMonth = DateTime(year, month + 1, 1);
+    // Subtract one day from the first day of the next month
+    // to get the last day of the current month
+    return firstDayOfNextMonth.subtract(Duration(days: 1));
   }
 
   @override
@@ -107,7 +120,9 @@ class _CalendarPageView extends HookConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        MonthYearLabel(monthYearLabelBuilder),
+        this.showMonthYearLabel
+            ? MonthYearLabel(monthYearLabelBuilder)
+            : SizedBox.shrink(),
         Expanded(
           child: PageView.builder(
             controller:
@@ -128,12 +143,10 @@ class _CalendarPageView extends HookConsumerWidget {
                   index.visibleDateTime;
               final currentDateTime = ref.read(currentDateProvider);
               if (onPageChanged != null) {
-                final currentFirstDate = _getFirstDay(currentDateTime);
                 onPageChanged!(
-                  currentFirstDate,
-                  currentFirstDate.add(
-                    Duration(days: 41),
-                  ),
+                  currentDateTime,
+                  getLastDayOfMonth(
+                      currentDateTime.year, currentDateTime.month),
                 );
               }
             },
