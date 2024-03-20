@@ -13,17 +13,21 @@ class DaysRow extends StatelessWidget {
     Key? key,
     required this.visiblePageDate,
     required this.dates,
+    required this.selectedDate,
     required this.dateTextStyle,
     required this.onCellTapped,
+    required this.selectedDayColor,
     required this.todayMarkColor,
     required this.todayTextColor,
     required this.events,
   }) : super(key: key);
 
   final List<DateTime> dates;
+  final DateTime selectedDate;
   final DateTime visiblePageDate;
   final TextStyle? dateTextStyle;
   final void Function(DateTime)? onCellTapped;
+  final Color selectedDayColor;
   final Color todayMarkColor;
   final Color todayTextColor;
   final List<CalendarEvent> events;
@@ -35,9 +39,11 @@ class DaysRow extends StatelessWidget {
         children: dates.map((date) {
           return _DayCell(
             date: date,
+            selectedDate: selectedDate,
             visiblePageDate: visiblePageDate,
             dateTextStyle: dateTextStyle,
             onCellTapped: onCellTapped,
+            selectedDayColor: selectedDayColor,
             todayMarkColor: todayMarkColor,
             todayTextColor: todayTextColor,
             events: events,
@@ -54,18 +60,21 @@ class DaysRow extends StatelessWidget {
 class _DayCell extends HookConsumerWidget {
   _DayCell({
     required this.date,
+    required this.selectedDate,
     required this.visiblePageDate,
     required this.dateTextStyle,
     required this.onCellTapped,
+    required this.selectedDayColor,
     required this.todayMarkColor,
     required this.todayTextColor,
     required this.events,
   });
-
+  final DateTime selectedDate;
   final DateTime date;
   final DateTime visiblePageDate;
   final TextStyle? dateTextStyle;
   final void Function(DateTime)? onCellTapped;
+  final Color selectedDayColor;
   final Color todayMarkColor;
   final Color todayTextColor;
   final List<CalendarEvent> events;
@@ -106,10 +115,13 @@ class _DayCell extends HookConsumerWidget {
                     ? _TodayLabel(
                         date: date,
                         dateTextStyle: dateTextStyle,
+                        selectedDayColor: selectedDayColor,
                         todayMarkColor: todayMarkColor,
                         todayTextColor: todayTextColor,
                       )
                     : _DayLabel(
+                        selectedDate: selectedDate,
+                        selectedDayColor: selectedDayColor,
                         date: date,
                         visiblePageDate: visiblePageDate,
                         dateTextStyle: dateTextStyle,
@@ -132,12 +144,14 @@ class _TodayLabel extends StatelessWidget {
     Key? key,
     required this.date,
     required this.dateTextStyle,
+    required this.selectedDayColor,
     required this.todayMarkColor,
     required this.todayTextColor,
   }) : super(key: key);
 
   final DateTime date;
   final TextStyle? dateTextStyle;
+  final Color selectedDayColor;
   final Color todayMarkColor;
   final Color todayTextColor;
 
@@ -170,14 +184,18 @@ class _TodayLabel extends StatelessWidget {
 }
 
 class _DayLabel extends StatelessWidget {
-  const _DayLabel({
-    Key? key,
-    required this.date,
-    required this.visiblePageDate,
-    required this.dateTextStyle,
-  }) : super(key: key);
+  const _DayLabel(
+      {Key? key,
+      required this.date,
+      required this.visiblePageDate,
+      required this.dateTextStyle,
+      required this.selectedDayColor,
+      required this.selectedDate})
+      : super(key: key);
 
   final DateTime date;
+  final DateTime selectedDate;
+  final Color selectedDayColor;
   final DateTime visiblePageDate;
   final TextStyle? dateTextStyle;
 
@@ -188,18 +206,44 @@ class _DayLabel extends StatelessWidget {
         fontWeight: FontWeight.w500,
         color: Theme.of(context).colorScheme.onSurface);
     final textStyle = caption.merge(dateTextStyle);
+    final isSelectedDay = (date.year == selectedDate.year &&
+        date.month == selectedDate.month &&
+        date.day == selectedDate.day);
     return Container(
-      margin: EdgeInsets.symmetric(vertical: dayLabelVerticalMargin.toDouble()),
-      height: dayLabelContentHeight.toDouble(),
-      child: Text(
-        date.day.toString(),
-        textAlign: TextAlign.center,
-        style: textStyle.copyWith(
-          color: isCurrentMonth
-              ? textStyle.color
-              : textStyle.color!.withOpacity(0.4),
+      margin: EdgeInsets.symmetric(vertical: 2),
+      height: 20,
+      width: 20,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: isSelectedDay ? selectedDayColor : Colors.transparent,
+      ),
+      child: Center(
+        child: Text(
+          date.day.toString(),
+          textAlign: TextAlign.center,
+          style: textStyle.copyWith(
+            color: isSelectedDay
+                ? Colors.white
+                : (isCurrentMonth
+                    ? textStyle.color
+                    : textStyle.color!.withOpacity(0.4)),
+          ),
         ),
       ),
     );
+
+    // return Container(
+    //   margin: EdgeInsets.symmetric(vertical: dayLabelVerticalMargin.toDouble()),
+    //   height: dayLabelContentHeight.toDouble(),
+    //   child: Text(
+    //     date.day.toString(),
+    //     textAlign: TextAlign.center,
+    //     style: textStyle.copyWith(
+    //       color: isCurrentMonth
+    //           ? textStyle.color
+    //           : textStyle.color!.withOpacity(0.4),
+    //     ),
+    //   ),
+    // );
   }
 }

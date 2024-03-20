@@ -24,6 +24,8 @@ class CellCalendar extends HookConsumerWidget {
     this.events = const [],
     this.onPageChanged,
     this.onCellTapped,
+    required this.selectedDate,
+    this.selectedDayColor = Colors.blue,
     this.todayMarkColor = Colors.blue,
     this.todayTextColor = Colors.white,
     this.daysOfTheWeekBuilder,
@@ -47,6 +49,8 @@ class CellCalendar extends HookConsumerWidget {
   final List<CalendarEvent> events;
   final void Function(DateTime firstDate, DateTime lastDate)? onPageChanged;
   final void Function(DateTime)? onCellTapped;
+  final DateTime selectedDate;
+  final Color selectedDayColor;
   final Color todayMarkColor;
   final Color todayTextColor;
 
@@ -59,8 +63,10 @@ class CellCalendar extends HookConsumerWidget {
         monthYearLabelBuilder: monthYearLabelBuilder,
         dateTextStyle: dateTextStyle,
         events: events,
+        selectedDate: selectedDate,
         onPageChanged: onPageChanged,
         onCellTapped: onCellTapped,
+        selectedDayColor: selectedDayColor,
         todayMarkColor: todayMarkColor,
         todayTextColor: todayTextColor,
         showMonthYearLabel: this.showMonthyearLabel,
@@ -79,6 +85,8 @@ class _CalendarPageView extends HookConsumerWidget {
     required this.events,
     required this.onPageChanged,
     required this.onCellTapped,
+    required this.selectedDate,
+    required this.selectedDayColor,
     required this.todayMarkColor,
     required this.todayTextColor,
     required this.showMonthYearLabel,
@@ -98,6 +106,8 @@ class _CalendarPageView extends HookConsumerWidget {
   final List<CalendarEvent> events;
   final void Function(DateTime firstDate, DateTime lastDate)? onPageChanged;
   final void Function(DateTime)? onCellTapped;
+  final DateTime selectedDate;
+  final Color selectedDayColor;
   final Color todayMarkColor;
   final Color todayTextColor;
   final bool showMonthYearLabel;
@@ -130,10 +140,12 @@ class _CalendarPageView extends HookConsumerWidget {
                 cellCalendarPageController ?? CellCalendarPageController(),
             itemBuilder: (context, index) {
               return _CalendarPage(
+                selectedDate: this.selectedDate,
                 visiblePageDate: index.visibleDateTime,
                 daysOfTheWeekBuilder: daysOfTheWeekBuilder,
                 dateTextStyle: dateTextStyle,
                 onCellTapped: onCellTapped,
+                selectedDayColor: selectedDayColor,
                 todayMarkColor: todayMarkColor,
                 todayTextColor: todayTextColor,
                 events: events,
@@ -165,18 +177,22 @@ class _CalendarPage extends StatelessWidget {
   const _CalendarPage({
     Key? key,
     required this.visiblePageDate,
+    required this.selectedDate,
     required this.daysOfTheWeekBuilder,
     required this.dateTextStyle,
     required this.onCellTapped,
+    required this.selectedDayColor,
     required this.todayMarkColor,
     required this.todayTextColor,
     required this.events,
   }) : super(key: key);
 
   final DateTime visiblePageDate;
+  final DateTime selectedDate;
   final DaysBuilder? daysOfTheWeekBuilder;
   final TextStyle? dateTextStyle;
   final void Function(DateTime)? onCellTapped;
+  final Color selectedDayColor;
   final Color todayMarkColor;
   final Color todayTextColor;
   final List<CalendarEvent> events;
@@ -211,8 +227,10 @@ class _CalendarPage extends StatelessWidget {
                 return DaysRow(
                   visiblePageDate: visiblePageDate,
                   dates: days.getRange(index * 7, (index + 1) * 7).toList(),
+                  selectedDate: selectedDate,
                   dateTextStyle: dateTextStyle,
                   onCellTapped: onCellTapped,
+                  selectedDayColor: selectedDayColor,
                   todayMarkColor: todayMarkColor,
                   todayTextColor: todayTextColor,
                   events: events,
