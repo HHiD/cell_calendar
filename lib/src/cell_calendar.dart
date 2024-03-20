@@ -125,6 +125,7 @@ class _CalendarPageView extends HookConsumerWidget {
             : SizedBox.shrink(),
         Expanded(
           child: PageView.builder(
+            scrollDirection: Axis.vertical,
             controller:
                 cellCalendarPageController ?? CellCalendarPageController(),
             itemBuilder: (context, index) {
