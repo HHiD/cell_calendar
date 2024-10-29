@@ -1,4 +1,4 @@
-#The Old Project is not able to arrange event dyanmically, for this changes almost change all implementation.
+# The Old Project is not able to arrange event dyanmically, for this changes almost change all implementation.
 The effect looks like below.
 
 
@@ -9,7 +9,7 @@ The effect looks like below.
 
 
 
-#This is the original code.
+# This is the original code.
 
 # cell_calendar
 
